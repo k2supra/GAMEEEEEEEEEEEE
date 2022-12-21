@@ -7,6 +7,7 @@ from drawing import Drawing
 
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.mouse.set_visible(False)
 sc_map = pygame.Surface(MINIMAP_RES)
 
 sprites = Sprites()
