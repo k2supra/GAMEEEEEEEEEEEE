@@ -12,7 +12,7 @@ sc_map = pygame.Surface(MINIMAP_RES)
 
 sprites = Sprites()
 clock = pygame.time.Clock()
-player = Player()
+player = Player(sprites)
 drawing = Drawing(sc, sc_map)
 
 

@@ -15,6 +15,7 @@ class Sprites:
                     [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png') for i in range(10)]),
                 'animation_dist': 800,
                 'animation_speed': 10,
+                'blocked': True
             },
 
             'normal_barrel':{
@@ -25,7 +26,8 @@ class Sprites:
                 'animation': deque(
                     [pygame.image.load(f'D:/sprites/barrel/barrel.png')]),
                 'animation_dist': 800,
-                'animation_speed': 10,
+                'animation_speed': 0,
+                'blocked': True
             }
         }
 
@@ -47,8 +49,11 @@ class SpriteObject:
         self.animation = parameters['animation']
         self.animation_dist = parameters['animation_dist']
         self.animation_speed = parameters['animation_speed']
+        self.blocked = parameters['blocked']
+        self.side = 40
         self.animation_count = 0
-        self.pos = self.x, self.y = pos[0] * TILE, pos[1] * TILE
+        self.x, self.y = pos[0] * TILE, pos[1] * TILE
+        self.pos = self.x - self.side // 2, self.y - self.side // 2
         if self.viewing_angles:
             self.sprite_angles = [frozenset(range(i, i + 36)) for i in range(0, 360, 36)]
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
