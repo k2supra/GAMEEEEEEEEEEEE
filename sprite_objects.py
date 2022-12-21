@@ -6,13 +6,13 @@ class Sprites:
     def __init__(self):
         self.sprite_types = {
             'barrel': pygame.image.load('D:/sprites/barrel/barrel.png').convert_alpha(),
-            #'barrel_gold': [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png').convert_alpha() for i in range(10)]
+            'barrel_gold': [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png').convert_alpha() for i in range(10)]
         }
 
         self.list_of_objects = [
             SpriteObject(self.sprite_types['barrel'], True, (7.1, 2.1), 1.8, 0.4),
             SpriteObject(self.sprite_types['barrel'], True, (7.9, 2.1), 1.8, 0.4),
-            #SpriteObject(self.sprite_types['barrel_gold'], False, (7.1, 3.1), 1.8, 0.4)
+            SpriteObject(self.sprite_types['barrel_gold'], False, (7.1, 3.1), 1.8, 0.4)
         ]
 
 
@@ -25,9 +25,9 @@ class SpriteObject:
         self.shift = shift
         self.scale = scale
 
-        #if not static:
-            #self.sprite_angles = [frozenset(range(i, i + 36)) for i in range(0, 360, 36)]
-            #self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
+        if not static:
+            self.sprite_angles = [frozenset(range(i, i + 36)) for i in range(0, 360, 36)]
+            self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
 
     def object_locate(self, player, walls):
         dx, dy = self.x - player.x, self.y - player.y
@@ -47,14 +47,14 @@ class SpriteObject:
             half_proj_height = proj_height // 2
             shift = half_proj_height * self.shift
 
-            #if not self.static:
-                #if theta < 0:
-                    #theta += DOUBLE_PI
-                #theta = 360 - int(math.degrees(theta))
+            if not self.static:
+                if theta < 0:
+                    theta += DOUBLE_PI
+                theta = 360 - int(math.degrees(theta))
 
-                #for angles in self.sprite_angles:
-                    #if theta in angles:
-                        #self.object = self.sprite_positions[angles]
+                for angles in self.sprite_angles:
+                    if theta in angles:
+                        self.object = self.sprite_positions[angles]
 
             sprite_pos = (current_ray * SCALE - half_proj_height, HALF_HEIGHT - half_proj_height + shift)
             sprite = pygame.transform.scale(self.object, (proj_height, proj_height))
