@@ -7,7 +7,7 @@ from drawing import Drawing
 
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
-sc_map = pygame.Surface((WIDTH // MAP_SCALE, HEIGHT // MAP_SCALE))
+sc_map = pygame.Surface(MINIMAP_RES)
 
 sprites = Sprites()
 clock = pygame.time.Clock()
