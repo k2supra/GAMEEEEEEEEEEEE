@@ -30,6 +30,10 @@ class SpriteObject:
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
 
     def object_locate(self, player, walls):
+        fake_walls0 = [walls[0] for i in range(FAKE_RAYS)]
+        fake_walls1 = [walls[-1] for i in range(FAKE_RAYS)]
+        fake_walls = fake_walls0 + walls + fake_walls1
+
         dx, dy = self.x - player.x, self.y - player.y
         distance_to_sprite = math.sqrt(dx ** 2 + dy ** 2)
 
@@ -42,7 +46,8 @@ class SpriteObject:
         current_ray = CENTER_RAY + delta_rays
         distance_to_sprite *= math.cos(HALF_FOV - current_ray * DELTA_ANGLE)
 
-        if 0 <= current_ray <= NUM_RAYS - 1 and distance_to_sprite < walls[current_ray][0]:
+        fake_ray = current_ray + FAKE_RAYS
+        if 0 <= fake_ray <= NUM_RAYS - 1 + 2 * FAKE_RAYS and distance_to_sprite < fake_walls[fake_ray][0]:
             proj_height = min(int(PROJ_COEFF / distance_to_sprite * self.scale), 2 * HEIGHT)
             half_proj_height = proj_height // 2
             shift = half_proj_height * self.shift
@@ -55,6 +60,7 @@ class SpriteObject:
                 for angles in self.sprite_angles:
                     if theta in angles:
                         self.object = self.sprite_positions[angles]
+                        break
 
             sprite_pos = (current_ray * SCALE - half_proj_height, HALF_HEIGHT - half_proj_height + shift)
             sprite = pygame.transform.scale(self.object, (proj_height, proj_height))

@@ -27,6 +27,7 @@ SCALE = WIDTH // NUM_RAYS
 # sprite settings
 DOUBLE_PI = 2 * math.pi
 CENTER_RAY = NUM_RAYS // 2 - 1
+FAKE_RAYS = 100
 
 # texture settings
 TEXTURE_WIDTH = 1200
