@@ -1,35 +1,59 @@
 import pygame
 from settings import *
+from collections import deque
 
 
 class Sprites:
     def __init__(self):
-        self.sprite_types = {
-            'barrel': pygame.image.load('D:/sprites/barrel/barrel.png').convert_alpha(),
-            'barrel_gold': [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png').convert_alpha() for i in range(10)]
+        self.sprites_parameters = {
+            'sprite_barrel':{
+                'sprite': pygame.image.load('D:/sprites/barrel/barrel.png').convert_alpha(),
+                'viewing_angles': None,
+                'shift': 1.8,
+                'scale': 0.4,
+                'animation': deque(
+                    [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png') for i in range(10)]),
+                'animation_dist': 800,
+                'animation_speed': 10,
+            },
+
+            'normal_barrel':{
+                'sprite': pygame.image.load('D:/sprites/barrel/barrel.png').convert_alpha(),
+                'viewing_angles': None,
+                'shift': 1.8,
+                'scale': 0.4,
+                'animation': deque(
+                    [pygame.image.load(f'D:/sprites/barrel/barrel.png')]),
+                'animation_dist': 800,
+                'animation_speed': 10,
+            }
         }
 
+
         self.list_of_objects = [
-            SpriteObject(self.sprite_types['barrel'], True, (7.1, 2.1), 1.8, 0.4),
-            SpriteObject(self.sprite_types['barrel'], True, (7.9, 2.1), 1.8, 0.4),
-            SpriteObject(self.sprite_types['barrel_gold'], False, (7.1, 3.1), 1.8, 0.4)
+            SpriteObject(self.sprites_parameters['sprite_barrel'], (7.1, 2.1)),
+            #SpriteObject(self.sprites_parameters['sprite_barrel'], (7.9, 2.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (7.9, 2.1)),
         ]
 
 
 
 class SpriteObject:
-    def __init__(self, object, static, pos, shift, scale):
-        self.object = object
-        self.static = static
+    def __init__(self, parameters, pos):
+        self.object = parameters['sprite']
+        self.viewing_angles = parameters['viewing_angles']
+        self.shift = parameters['shift']
+        self.scale = parameters['scale']
+        self.animation = parameters['animation']
+        self.animation_dist = parameters['animation_dist']
+        self.animation_speed = parameters['animation_speed']
+        self.animation_count = 0
         self.pos = self.x, self.y = pos[0] * TILE, pos[1] * TILE
-        self.shift = shift
-        self.scale = scale
-
-        if not static:
+        if self.viewing_angles:
             self.sprite_angles = [frozenset(range(i, i + 36)) for i in range(0, 360, 36)]
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
 
-    def object_locate(self, player, walls):
+    def object_locate(self, player):
 
 
         dx, dy = self.x - player.x, self.y - player.y
@@ -49,8 +73,8 @@ class SpriteObject:
             proj_height = min(int(PROJ_COEFF / distance_to_sprite * self.scale), DOUBLE_HEIGHT)
             half_proj_height = proj_height // 2
             shift = half_proj_height * self.shift
-
-            if not self.static:
+            # choosing sprite for angle
+            if self.viewing_angles:
                 if theta < 0:
                     theta += DOUBLE_PI
                 theta = 360 - int(math.degrees(theta))
@@ -60,8 +84,20 @@ class SpriteObject:
                         self.object = self.sprite_positions[angles]
                         break
 
+            # sprite animation
+            sprite_object = self.object
+            if self.animation and distance_to_sprite < self.animation_dist:
+                sprite_object = self.animation[0]
+                if self.animation_count < self.animation_speed:
+                    self.animation_count += 1
+                else:
+                    self.animation.rotate()
+                    self.animation_count = 0
+
+            # sprite scale and pos
+
             sprite_pos = (current_ray * SCALE - half_proj_height, HALF_HEIGHT - half_proj_height + shift)
-            sprite = pygame.transform.scale(self.object, (proj_height, proj_height))
+            sprite = pygame.transform.scale(sprite_object, (proj_height, proj_height))
             return (distance_to_sprite, sprite, sprite_pos)
         else:
             return (False,)
