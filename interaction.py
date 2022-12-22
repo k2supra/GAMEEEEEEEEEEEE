@@ -65,7 +65,7 @@ class Interaction:
                 if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
                     obj.npc_action_trigger = True
                 else:
-                    obj.npc_action_trigger =False
+                    obj.npc_action_trigger = False
 
     # def npc_move(self, obj):
     # if obj.distance_to_sprite > TILE:
