@@ -59,14 +59,13 @@ class Interaction:
                             self.drawing.shot_animation_trigger = False
                     break
 
-    # def npc_action(self):
-    # for obj in self.sprites.list_of_objects:
-    # if obj.flag == 'npc':
-    # if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
-    # obj.npc_action_trigger: True
-    # self.npc_move
-    # else:
-    # obj.npc_action_trigger: False
+    def npc_action(self):
+        for obj in self.sprites.list_of_objects:
+            if obj.flag == 'npc' and not obj.is_dead:
+                if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
+                    obj.npc_action_trigger = True
+                else:
+                    obj.npc_action_trigger =False
 
     # def npc_move(self, obj):
     # if obj.distance_to_sprite > TILE:

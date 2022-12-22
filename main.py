@@ -27,6 +27,7 @@ while True:
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
 
     interaction.interaction_objects()
+    interaction.npc_action()
 
     pygame.display.flip()
     clock.tick()
