@@ -5,10 +5,10 @@ import math
 import pygame
 from numba import njit
 
+
 @njit(fastmath=True, cache=True)
 def ray_casting_npc_player(npc_x, npc_y, world_map, player_pos):
     ox, oy = player_pos
-    texture_v, texture_h = 1, 1
     xm, ym = mapping(ox, oy)
     delta_x, delta_y = ox - npc_x, oy - npc_y
     cur_angle = math.atan2(delta_y, delta_x)
@@ -40,32 +40,37 @@ def ray_casting_npc_player(npc_x, npc_y, world_map, player_pos):
         y += dy * TILE
     return True
 
-class Interaction():
+
+
+class Interaction:
     def __init__(self, player, sprites, drawing):
         self.player = player
         self.sprites = sprites
         self.drawing = drawing
 
+    def interaction_objects(self):
+        if self.player.shot and self.drawing.shot_animation_trigger:
+            for obj in sorted(self.sprites.list_of_objects, key=lambda obj: obj.distance_to_sprite):
+                if obj.is_on_fire[1]:
+                    if obj.is_dead != 'immortal' and not obj.is_dead:
+                        if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
+                            obj.is_dead = True
+                            obj.blocked = None
+                            self.drawing.shot_animation_trigger = False
+                    break
 
+    # def npc_action(self):
+    # for obj in self.sprites.list_of_objects:
+    # if obj.flag == 'npc':
+    # if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
+    # obj.npc_action_trigger: True
+    # self.npc_move
+    # else:
+    # obj.npc_action_trigger: False
 
-    #def interaction_objects(self):
-        #if self.player.shot and self.drawing.shot_animation_trigger:
-            #for obj in sorted(self.sprites.list_of_objects, key=lambda obj: obj.distance_to_sprite):
-                #if obj.is_on_fire[1]:
-                    #if obj.is_dead != 'immortal'
-
-    def npc_action(self):
-        for obj in self.sprites.list_of_objects:
-            if obj.flag == 'npc':
-                if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
-                    obj.npc_action_trigger: True
-                    self.npc_move
-                else:
-                    obj.npc_action_trigger: False
-
-    def npc_move(self, obj):
-        if obj.distance_to_sprite > TILE:
-            dx = obj.x - self.player.pos[0]
-            dy = obj.y - self.player.pos[1]
-            obj.x = obj.x + 1 if dx < 0 else obj.x - 1
-            obj.y = obj.y + 1 if dy < 0 else obj.y - 1
+    # def npc_move(self, obj):
+    # if obj.distance_to_sprite > TILE:
+    # dx = obj.x - self.player.pos[0]
+    # dy = obj.y - self.player.pos[1]
+    # obj.x = obj.x + 1 if dx < 0 else obj.x - 1
+    # obj.y = obj.y + 1 if dy < 0 else obj.y - 1

@@ -11,8 +11,9 @@ class Drawing:
         self.sc_map = sc_map
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
         self.textures = {1: pygame.image.load('D:/1.jpg').convert(),
-                        2: pygame.image.load('D:/3.jpg').convert(),
-                        'S': pygame.image.load('D:/2.jpg').convert()
+                        2: pygame.image.load('D:/9.jpg').convert(),
+                        #3: pygame.image.load('D:/johnson.jpg').convert(),
+                        'S': pygame.image.load('D:/3.jpg').convert()
                         }
 
         # weapon parameters

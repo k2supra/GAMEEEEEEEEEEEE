@@ -18,8 +18,8 @@ class Sprites:
                 'scale': (0.4, 0.4),
                 'animation': deque(
                     [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png') for i in range(10)]),
-                'is_dead': None,
-                'dead_shift': 0,
+                'is_dead': 'immortal',
+                'dead_shift': -10,
                 'animation_dist': 800,
                 'animation_speed': 10,
                 'death_animation': None,
@@ -39,8 +39,8 @@ class Sprites:
                 'animation_speed': 10,
                 'death_animation': deque(
                     [pygame.image.load(f'D:/sprites/barrel/m_barrel/{i}.png').convert_alpha() for i in range(2)]),
-                'is_dead': 'immortal',
-                'dead_shift': 0,
+                'is_dead': None,
+                'dead_shift': 2,
                 'blocked': True,
                 'flag': 'enemy',
                 'obj_action': []
@@ -54,7 +54,7 @@ class Sprites:
                 'side': 60,
                 'animation': deque(
                     [pygame.image.load(f'D:/sprites/johnson_ph/johnson.jpg')]),
-                'is_dead': None,
+                'is_dead': 'immortal',
                 'dead_shift': 0,
                 'animation_dist': 800,
                 'animation_speed': 0,
@@ -184,7 +184,7 @@ class SpriteObject:
                 self.dead_sprite = self.death_animation[0]
                 self.dead_animation_count += 1
             else:
-                self.dead_sprite = self.dead_animation.popleft()
+                self.dead_sprite = self.death_animation.popleft()
                 self.dead_animation_count = 0
         return self.dead_sprite
 

@@ -2,7 +2,7 @@ from player import Player
 from sprite_objects import *
 from ray_casting import ray_casting_walls
 from drawing import Drawing
-#from interaction import Interaction
+from interaction import Interaction
 
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -13,7 +13,7 @@ sprites = Sprites()
 clock = pygame.time.Clock()
 player = Player(sprites)
 drawing = Drawing(sc, sc_map, player)
-#interaction = Interaction(player, sprites, drawing)
+interaction = Interaction(player, sprites, drawing)
 
 
 while True:
@@ -26,7 +26,7 @@ while True:
     drawing.mini_map(player)
     drawing.player_weapon([wall_shot, sprites.sprite_shot])
 
-    #interaction.npc_action()
+    interaction.interaction_objects()
 
     pygame.display.flip()
     clock.tick()
