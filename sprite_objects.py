@@ -1,6 +1,10 @@
 import pygame
 from settings import *
 from collections import deque
+from ray_casting import mapping
+from numba.core import types
+from numba.typed import Dict
+from numba import int32
 
 
 class Sprites:
@@ -15,19 +19,21 @@ class Sprites:
                     [pygame.image.load(f'D:/sprites/barrel_gold/{i}.png') for i in range(10)]),
                 'animation_dist': 800,
                 'animation_speed': 10,
-                'blocked': True
+                'blocked': True,
+                'flag': 'decor'
             },
 
-            'normal_barrel':{
-                'sprite': pygame.image.load('D:/sprites/barrel/barrel.png').convert_alpha(),
+            'npc_johnson':{
+                'sprite': pygame.image.load('D:/sprites/johnson_ph/johnson.jpg').convert_alpha(),
                 'viewing_angles': None,
                 'shift': 1.8,
                 'scale': 0.4,
                 'animation': deque(
-                    [pygame.image.load(f'D:/sprites/barrel/barrel.png')]),
+                    [pygame.image.load(f'D:/sprites/johnson_ph/johnson.jpg')]),
                 'animation_dist': 800,
                 'animation_speed': 0,
-                'blocked': True
+                'blocked': True,
+                'flag': 'npc'
             }
         }
 
@@ -35,7 +41,7 @@ class Sprites:
         self.list_of_objects = [
             SpriteObject(self.sprites_parameters['sprite_barrel'], (7.1, 2.1)),
             #SpriteObject(self.sprites_parameters['sprite_barrel'], (7.9, 2.1)),
-            SpriteObject(self.sprites_parameters['normal_barrel'], (7.9, 2.1)),
+            SpriteObject(self.sprites_parameters['npc_johnson'], (7.9, 2.1)),
         ]
 
 
@@ -52,6 +58,8 @@ class SpriteObject:
         self.blocked = parameters['blocked']
         self.side = 40
         self.animation_count = 0
+        self.flag = parameters['flag']
+        self.npc_action_trigger = False
         self.x, self.y = pos[0] * TILE, pos[1] * TILE
         self.pos = self.x - self.side // 2, self.y - self.side // 2
         if self.viewing_angles:
@@ -98,6 +106,15 @@ class SpriteObject:
                 else:
                     self.animation.rotate()
                     self.animation_count = 0
+
+            def npc_in_action(self):
+                sprite_object = self.obj_action[0]
+                if self.animation_count < self.animation_speed:
+                    self.animation_count += 1
+                else:
+                    self.obj_action.rotate()
+                    self.animation_count = 0
+                return sprite_object
 
             # sprite scale and pos
 
