@@ -2,9 +2,11 @@ import pygame
 from settings import *
 from ray_casting import ray_casting
 from map import mini_map
+from  collections import deque
 
 class Drawing:
-    def __init__(self, sc, sc_map):
+    def __init__(self, sc, sc_map, player):
+        self.player = player
         self.sc = sc
         self.sc_map = sc_map
         self.font = pygame.font.SysFont('Arial', 36, bold=True)
@@ -12,6 +14,24 @@ class Drawing:
                         2: pygame.image.load('D:/3.jpg').convert(),
                         'S': pygame.image.load('D:/2.jpg').convert()
                         }
+
+        # weapon parameters
+        self.weapon_base_sprite = pygame.image.load('D:/sprites/weapon/base/0.png').convert_alpha()
+        self.weapon_shot_animation = deque([pygame.image.load(f'D:/sprites/weapon/anim/{i}.png').convert_alpha()
+                                            for i in range(5)])
+        self.weapon_rect = self.weapon_base_sprite.get_rect()
+        self.weapon_pos = (HALF_WIDTH - self.weapon_rect.width // 2, HEIGHT - self.weapon_rect.height)
+        self.shot_length = len(self.weapon_shot_animation)
+        self.shot_length_count = 0
+        self.shot_animation_speed = 3
+        self.shot_animation_count = 0
+        self.shot_animation_trigger = True
+
+        # sfx parameters
+        self.sfx = deque([pygame.image.load(f'D:/sprites/weapon/effect/{i}.png').convert_alpha() for i in range(6)])
+        self.sfx_lenght_count = 0
+        self.sfx_lenght = len(self.sfx)
+
 
     def background(self, angle):
         sky_offset = -5 * math.degrees(angle) % WIDTH
@@ -40,3 +60,31 @@ class Drawing:
         for x, y in mini_map:
             pygame.draw.rect(self.sc_map, SANDY, (x, y, MAP_TILE, MAP_TILE))
         self.sc.blit(self.sc_map, MAP_POS)
+
+    def player_weapon(self, shots):
+        if self.player.shot:
+            self.shot_projection = min(shots)[1] // 2
+            self.bullet_sfx()
+            shot_sprite = self.weapon_shot_animation[0]
+            self.sc.blit(shot_sprite, self.weapon_pos)
+            self.shot_animation_count += 1
+            if self.shot_animation_count == self.shot_animation_speed:
+                self.weapon_shot_animation.rotate(-1)
+                self.shot_animation_count = 0
+                self.shot_length_count += 1
+                self.shot_animation_trigger = False
+            if self.shot_length_count == self.shot_length:
+                self.player.shot = False
+                self.shot_length_count = 0
+                self.sfx_lenght_count = 0
+                self.shot_animation_trigger = True
+        else:
+            self.sc.blit(self.weapon_base_sprite, self.weapon_pos)
+
+    def bullet_sfx(self):
+        if self.sfx_lenght_count < self.sfx_lenght:
+            sfx = pygame.transform.scale(self.sfx[0], (self.shot_projection, self.shot_projection))
+            sfx_rect = sfx.get_rect()
+            self.sc.blit(sfx, (HALF_WIDTH - sfx_rect.w // 2, HALF_HEIGHT - sfx_rect.h // 2))
+            self.sfx_lenght_count += 1
+            self.sfx.rotate(-1)

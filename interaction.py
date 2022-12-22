@@ -31,14 +31,14 @@ def ray_casting_npc_player(npc_x, npc_y, world_map, player_pos):
 
     # horizontals
     y, dy = (ym + TILE, 1) if sin_a >= 0 else (ym, -1)
-    for i in range(0, int(abs(delta_x)) // TILE):
+    for i in range(0, int(abs(delta_y)) // TILE):
         depth_h = (y - oy) / sin_a
         xh = ox + depth_h * cos_a
         tile_h = mapping(xh, y + dy)
         if tile_h in world_map:
             return False
         y += dy * TILE
-        return True
+    return True
 
 class Interaction():
     def __init__(self, player, sprites, drawing):
@@ -59,5 +59,13 @@ class Interaction():
             if obj.flag == 'npc':
                 if ray_casting_npc_player(obj.x, obj.y, world_map, self.player.pos):
                     obj.npc_action_trigger: True
+                    self.npc_move
                 else:
                     obj.npc_action_trigger: False
+
+    def npc_move(self, obj):
+        if obj.distance_to_sprite > TILE:
+            dx = obj.x - self.player.pos[0]
+            dy = obj.y - self.player.pos[1]
+            obj.x = obj.x + 1 if dx < 0 else obj.x - 1
+            obj.y = obj.y + 1 if dy < 0 else obj.y - 1
