@@ -47,27 +47,37 @@ class Sprites:
             },
 
             'npc_johnson': {
-                'sprite': pygame.image.load('D:/sprites/johnson_ph/johnson.jpg').convert_alpha(),
+                'sprite': pygame.image.load('D:/sprites/johnson_ph/0.jpg').convert_alpha(),
                 'viewing_angles': None,
                 'shift': 0.0,
                 'scale': (0.8, 0.8),
                 'side': 60,
                 'animation': deque(
-                    [pygame.image.load(f'D:/sprites/johnson_ph/johnson.jpg')]),
+                    [pygame.image.load(f'D:/sprites/johnson_ph/0.jpg')]),
                 'is_dead': 'immortal',
-                'dead_shift': 0,
+                'dead_shift': 5,
                 'animation_dist': 800,
-                'animation_speed': 0,
+                'animation_speed': 5,
                 'death_animation': None,
                 'blocked': True,
                 'flag': 'npc',
-                'obj_action': []
+                'obj_action': deque(
+                    [pygame.image.load(f'D:/sprites/johnson_ph/{i}.jpg').convert_alpha() for i in range(4)]),
             }
         }
 
         self.list_of_objects = [
             SpriteObject(self.sprites_parameters['sprite_barrel'], (7.1, 2.1)),
             SpriteObject(self.sprites_parameters['normal_barrel'], (7.8, 2.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (8.8, 3.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (14.8, 1.5)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (14.8, 2.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (17.8, 3.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (2.3, 1.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (2.5, 7.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (5.6, 5.6)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (20.8, 5.1)),
+            SpriteObject(self.sprites_parameters['normal_barrel'], (20.8, 6.1)),
             # SpriteObject(self.sprites_parameters['sprite_barrel'], (7.9, 2.1)),
             SpriteObject(self.sprites_parameters['npc_johnson'], (10.9, 1.5)),
         ]
@@ -103,6 +113,9 @@ class SpriteObject:
             if len(self.object) == 8:
                 self.sprite_angles = [frozenset(range(338, 361)) | frozenset(range(0, 23))] + \
                                     [frozenset(range(i, i + 36)) for i in range(23, 338, 36)]
+            else:
+                self.sprite_angles = [frozenset(range(348, 361)) | frozenset(range(0, 11))] + \
+                                    [frozenset(range(i, i + 23)) for i in range(11, 348, 23)]
             self.sprite_positions = {angle: pos for angle, pos in zip(self.sprite_angles, self.object)}
 
     @property
